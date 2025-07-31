@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Github, ExternalLink, Mail, Linkedin, ChevronDown, Brain, Code, Zap, GraduationCap } from 'lucide-react';
+import { Github, ExternalLink, Mail, Linkedin, ChevronDown, Brain, Code, Zap } from 'lucide-react';
 
 // Animated Background Component
 function AnimatedBackground() {
@@ -29,6 +29,101 @@ function AnimatedBackground() {
             backgroundSize: '50px 50px'
           }} 
         />
+      </div>
+    </div>
+  );
+}
+
+// 3D-style Desktop Setup using CSS
+function DesktopSetup() {
+  const [glowIntensity, setGlowIntensity] = useState(0.5);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGlowIntensity(Math.random() * 0.5 + 0.3);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative flex items-center justify-center h-full perspective-1000">
+      <div className="transform-style-3d animate-float-slow">
+        {/* Desk */}
+        <div className="relative">
+          <div className="w-80 h-48 bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-2xl transform rotateX-10 rotateY-5">
+            
+            {/* Monitor */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 -translate-y-8">
+              <div className="relative">
+                {/* Monitor screen */}
+                <div 
+                  className="w-40 h-28 bg-black rounded-lg border-4 border-gray-700 shadow-xl transform rotateX-5"
+                  style={{ 
+                    boxShadow: `0 0 ${glowIntensity * 20}px rgba(6, 182, 212, ${glowIntensity})`,
+                    backgroundColor: `rgba(6, 182, 212, ${glowIntensity * 0.1})`
+                  }}
+                >
+                  {/* Code lines effect */}
+                  <div className="p-2 space-y-1">
+                    <div className="h-1 bg-green-400 w-3/4 rounded opacity-80"></div>
+                    <div className="h-1 bg-cyan-400 w-1/2 rounded opacity-60"></div>
+                    <div className="h-1 bg-purple-400 w-2/3 rounded opacity-70"></div>
+                    <div className="h-1 bg-pink-400 w-1/3 rounded opacity-50"></div>
+                  </div>
+                </div>
+                
+                {/* Monitor stand */}
+                <div className="w-12 h-8 bg-gray-700 mx-auto mt-2 rounded-b-lg"></div>
+                <div className="w-20 h-2 bg-gray-800 mx-auto mt-1 rounded-full"></div>
+              </div>
+            </div>
+            
+            {/* Keyboard */}
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+              <div className="w-32 h-12 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg shadow-lg transform rotateX-20">
+                <div className="grid grid-cols-12 gap-1 p-2">
+                  {Array.from({ length: 36 }).map((_, i) => (
+                    <div key={i} className="w-1 h-1 bg-gray-600 rounded-sm opacity-60"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* Mouse */}
+            <div className="absolute bottom-8 right-8">
+              <div className="w-6 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full shadow-lg transform rotateX-10">
+                <div className="w-1 h-1 bg-red-400 rounded-full mx-auto mt-2 animate-pulse"></div>
+              </div>
+            </div>
+            
+            {/* PC Tower */}
+            <div className="absolute -right-12 top-0 -translate-y-4">
+              <div className="w-16 h-32 bg-gradient-to-br from-gray-800 to-black rounded-lg shadow-2xl transform rotateY-10">
+                {/* PC lights */}
+                <div 
+                  className="w-2 h-2 bg-green-400 rounded-full mx-auto mt-4 animate-pulse"
+                  style={{ 
+                    boxShadow: `0 0 ${glowIntensity * 10}px rgba(34, 197, 94, ${glowIntensity})`
+                  }}
+                ></div>
+                <div 
+                  className="w-2 h-2 bg-blue-400 rounded-full mx-auto mt-2 animate-pulse"
+                  style={{ 
+                    boxShadow: `0 0 ${glowIntensity * 10}px rgba(59, 130, 246, ${glowIntensity})`,
+                    animationDelay: '0.5s'
+                  }}
+                ></div>
+                <div 
+                  className="w-2 h-2 bg-purple-400 rounded-full mx-auto mt-2 animate-pulse"
+                  style={{ 
+                    boxShadow: `0 0 ${glowIntensity * 10}px rgba(147, 51, 234, ${glowIntensity})`,
+                    animationDelay: '1s'
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -82,16 +177,29 @@ export default function Portfolio() {
     }
   };
 
-  // Handle navbar visibility on scroll
+  // Handle navbar visibility and active section on scroll
   useEffect(() => {
     const handleScroll = () => {
       const heroSection = document.getElementById('home');
+      const sections = ['home', 'about', 'projects', 'research', 'contact'];
+      
       if (heroSection) {
         const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
         const currentScrollY = window.scrollY;
         
         // Only show nav when in the hero section
         setShowNav(currentScrollY < heroBottom - 100);
+      }
+      
+      // Update active section based on scroll position
+      const currentScrollY = window.scrollY + 200; // Offset for better detection
+      
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section && currentScrollY >= section.offsetTop) {
+          setActiveSection(sections[i]);
+          break;
+        }
       }
     };
 
@@ -178,6 +286,18 @@ export default function Portfolio() {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
         }
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0px) rotateY(0deg); }
+          50% { transform: translateY(-20px) rotateY(5deg); }
+        }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .rotateX-10 { transform: rotateX(10deg); }
+        .rotateX-5 { transform: rotateX(5deg); }
+        .rotateX-20 { transform: rotateX(20deg); }
+        .rotateY-5 { transform: rotateY(5deg); }
+        .rotateY-10 { transform: rotateY(10deg); }
+        .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
       `}</style>
 
       <AnimatedBackground />
@@ -203,6 +323,10 @@ export default function Portfolio() {
 
       {/* Hero Section */}
       <section id="home" className="h-screen relative flex items-center justify-center">
+        <div className="absolute inset-0 flex items-end justify-center pb-32">
+          <DesktopSetup />
+        </div>
+        
         <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
           <div className="mb-8">
             <h1 className="text-6xl font-bold mb-4 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
@@ -377,12 +501,12 @@ export default function Portfolio() {
             Let's Connect
           </h2>
           
-          <p className="text-xl text-gray-300 mb-12 leading-relaxed">
+          <p className="text-xl text-gray-300 mb-8 leading-relaxed">
             I'm always interested in discussing new opportunities, research collaborations, 
             or just connecting with fellow developers and researchers. Let's build something amazing together!
           </p>
           
-          <div className="flex flex-wrap justify-center gap-6 mb-8">
+          <div className="flex flex-wrap justify-center gap-6">
             <a href="mailto:saad05@vt.edu" className="group flex items-center space-x-3 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
               <Mail size={24} className="group-hover:animate-bounce" />
               <span className="font-medium">saad05@vt.edu</span>
