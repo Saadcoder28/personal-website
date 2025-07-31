@@ -72,6 +72,7 @@ function TypingAnimation({ texts, className = "" }) {
 // Main Portfolio Component
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState('home');
+  const [showNav, setShowNav] = useState(true);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -80,6 +81,23 @@ export default function Portfolio() {
       setActiveSection(sectionId);
     }
   };
+
+  // Handle navbar visibility on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroSection = document.getElementById('home');
+      if (heroSection) {
+        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        const currentScrollY = window.scrollY;
+        
+        // Only show nav when in the hero section
+        setShowNav(currentScrollY < heroBottom - 100);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const projects = [
     {
@@ -165,13 +183,15 @@ export default function Portfolio() {
       <AnimatedBackground />
 
       {/* Navigation */}
-      <nav className="fixed top-0 right-0 z-50 p-6">
-        <div className="flex items-center space-x-8 bg-gray-900/80 backdrop-blur-md px-6 py-3 rounded-full border border-gray-700">
+      <nav className={`fixed top-0 left-1/2 transform -translate-x-1/2 z-50 p-4 transition-all duration-300 ${
+        showNav ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+      }`}>
+        <div className="flex items-center space-x-3 sm:space-x-6 bg-gray-900/80 backdrop-blur-md px-4 sm:px-6 py-3 rounded-full border border-gray-700">
           {['home', 'about', 'projects', 'research', 'contact'].map((section) => (
             <button
               key={section}
               onClick={() => scrollToSection(section)}
-              className={`capitalize hover:text-cyan-400 transition-colors ${
+              className={`capitalize hover:text-cyan-400 transition-colors text-sm sm:text-base ${
                 activeSection === section ? 'text-cyan-400' : 'text-gray-300'
               }`}
             >
